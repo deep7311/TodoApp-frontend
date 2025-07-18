@@ -44,7 +44,7 @@ const TodoList = () => {
     }
   };
 
-  // Change status (Pending ↔ Completed)
+  // Change status (Pending to Completed)
   const handleStatusChange = async (todoId, newStatus) => {
     try {
       const res = await axios.patch(`${url}/api/todos/${todoId}`, {
@@ -76,6 +76,14 @@ const TodoList = () => {
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+
+      {/* welcome user name display hoga */}
+      {user && (
+        <h1 className="text-xl font-semibold text-center text-gray-700 mb-4">
+          👋 Welcome, <span className="text-blue-600">{user.username}</span>
+        </h1>
+      )}
+
       <h2 className="text-2xl font-semibold text-center mb-6 text-blue-600">
         📝 Your ToDo List
       </h2>
