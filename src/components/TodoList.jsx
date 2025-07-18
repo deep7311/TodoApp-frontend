@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaTrash } from "react-icons/fa";
 
 const url = import.meta.env.VITE_API_URL;
 
@@ -12,96 +12,97 @@ const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  const handleAddTask = async () => {
-    try {
-      const response = await axios.post(`${url}/api/todos/${user._id}`, {
-        task: newTask,
-        user: user._id,
-      });
-
-      if (response.data.success) {
-        toast.success("Task added successfully");
-        setNewTask("");
-        getAllTodos();
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to add task");
-    }
-  };
-
+  // Fetch all todos of the user
   const getAllTodos = async () => {
     try {
-      const response = await axios.get(`${url}/api/todos/${user._id}`);
-      if (response.data.success) {
-        setTasks(response.data.todos);
-      }
-    } catch (error) {
-      console.log(error);
+      const res = await axios.get(`${url}/api/todos/${user._id}`);
+      if (res.data.success) setTasks(res.data.todos);
+    } catch (err) {
+      console.log(err);
       toast.error("Failed to fetch tasks");
     }
   };
 
-  const handleStatusChange = async (todoId, newStatus) => {
+  // Add new task
+  const handleAddTask = async () => {
+    if (!newTask.trim()) return toast.warn("Task cannot be empty");
+
     try {
-      const response = await axios.patch(`${url}/api/todos/${todoId}`, {
-        status: newStatus,
+      const res = await axios.post(`${url}/api/todos/${user._id}`, {
+        task: newTask,
+        user: user._id,
       });
-      if (response.data.success) {
+
+      if (res.data.success) {
+        toast.success("Task added");
+        setNewTask("");
         getAllTodos();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to add task");
     }
   };
 
+  // Change status (Pending ↔ Completed)
+  const handleStatusChange = async (todoId, newStatus) => {
+    try {
+      const res = await axios.patch(`${url}/api/todos/${todoId}`, {
+        status: newStatus,
+      });
+      if (res.data.success) getAllTodos();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Delete task
   const handleDeleteTask = async (todoId) => {
     try {
-      const response = await axios.delete(`${url}/api/todos/${todoId}`);
-      if (response.data.success) {
-        toast.success("Task deleted successfully");
+      const res = await axios.delete(`${url}/api/todos/${todoId}`);
+      if (res.data.success) {
+        toast.success("Task deleted");
         getAllTodos();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       toast.error("Failed to delete task");
     }
   };
 
   useEffect(() => {
-    if (user) {
-      getAllTodos();
-    }
+    if (user) getAllTodos();
   }, [user]);
 
   return (
-    <div className="max-w-xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center">📝 Your ToDo List</h2>
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+      <h2 className="text-2xl font-semibold text-center mb-6 text-blue-600">
+        📝 Your ToDo List
+      </h2>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-5">
         <input
           type="text"
-          name="task"
-          className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Write a task..."
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
+          placeholder="Write a task..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <button
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           onClick={handleAddTask}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           Add
         </button>
       </div>
 
-      <ul className="space-y-4">
+      <ul className="space-y-3">
         {tasks.length === 0 ? (
-          <p className="text-gray-500">No tasks yet. Add some Task</p>
+          <p className="text-gray-500 text-center">No tasks yet. Add some!</p>
         ) : (
-          tasks.map((task, index) => (
+          tasks.map((task) => (
             <li
-              key={index}
+              key={task._id}
               className={`flex items-center justify-between p-3 rounded border ${
                 task.status === "Completed"
                   ? "bg-green-100 border-green-300"
@@ -110,33 +111,29 @@ const TodoList = () => {
             >
               <div className="flex items-center gap-2">
                 {task.status === "Completed" && (
-                  <FaCheckCircle className="text-green-600" />
+                  <FaCheckCircle className="text-green-600 text-lg" />
                 )}
-                <span
-                  className="font-medium"
-                >
-                  {task.task}
-                </span>
+                <span className="font-medium text-gray-800">{task.task}</span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <select
                   value={task.status}
                   onChange={(e) =>
                     handleStatusChange(task._id, e.target.value)
                   }
-                  className="border px-2 py-1 rounded bg-white text-sm"
+                  className="border px-2 py-1 rounded text-sm bg-white"
                 >
                   <option value="Pending">Pending</option>
                   <option value="Completed">Completed</option>
                 </select>
 
                 <button
-                  className="text-red-500 hover:text-red-700 ml-2"
                   title="Delete Task"
                   onClick={() => handleDeleteTask(task._id)}
+                  className="text-red-500 hover:text-red-700"
                 >
-                  Delete
+                  <FaTrash />
                 </button>
               </div>
             </li>

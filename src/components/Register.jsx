@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [user, setUser] = useState({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -31,88 +31,92 @@ const Register = () => {
       const url = `${API_URL}/api/users/register`;
       const response = await axios.post(url, payload);
 
-      console.log(response.data);
       toast.success("Registration successful!", {
-        position: 'top-center',
+        position: "top-center",
         autoClose: 3000,
-        theme: 'light',
+        theme: "light",
       });
-      navigate('/login');
+
+      navigate("/login");
     } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(
-        error.response?.data?.message || "Something went wrong",
-        {
-          position: 'top-center',
-          autoClose: 3000,
-          theme: 'colored',
-        }
-      );
+      toast.error(error.response?.data?.message || "Something went wrong", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "colored",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[80vh] bg-gray-100 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-semibold text-center mb-6 text-indigo-600">
-          Register
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 px-4">
+      <div className="w-full max-w-md bg-white/70 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/40">
+        <h2 className="text-3xl font-extrabold text-center mb-6 text-pink-600">
+          🚀 Create Your Account
         </h2>
 
-        {/* Username Input */}
-        <input
-          type="text"
-          name="username"
-          value={user.username}
-          onChange={handleChange}
-          placeholder="Username"
-          required
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+        <form onSubmit={handleSubmit}>
+          {/* Username */}
+          <div className="mb-4">
+            <input
+              type="text"
+              name="username"
+              value={user.username}
+              onChange={handleChange}
+              placeholder="Username"
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-        {/* Email Input */}
-        <input
-          type="email"
-          name="email"
-          value={user.email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+          {/* Email */}
+          <div className="mb-4">
+            <input
+              type="email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+              placeholder="Email"
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-        {/* Password Input */}
-        <input
-          type="password"
-          name="password"
-          value={user.password}
-          onChange={handleChange}
-          placeholder="Password"
-          required
-          className="w-full px-4 py-2 mb-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+          {/* Password */}
+          <div className="mb-6">
+            <input
+              type="password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              placeholder="Password"
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-        {/* Register Button */}
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition duration-200"
-          disabled={loading}
-        >
-          {loading ? "Registering..." : "Register"}
-        </button>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-semibold py-3 rounded-lg shadow hover:opacity-90 transition"
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
+        </form>
 
-        {/* Login Link */}
-        <p className="text-center mt-4 text-sm text-gray-600">
+        {/* Link to Login */}
+        <p className="text-center mt-6 text-sm text-gray-700">
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 hover:underline">
+          <Link
+            to="/login"
+            className="text-indigo-600 font-semibold hover:underline"
+          >
             Login
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 };

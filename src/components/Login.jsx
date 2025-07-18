@@ -5,11 +5,7 @@ import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 
 const Login = () => {
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [data, setData] = useState({ email: "", password: "" });
   const { setUser } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -27,14 +23,11 @@ const Login = () => {
       const res = await axios.post(`${url}/api/users/login`, data);
 
       setUser(res.data.user);
-      console.log("Login success:", res.data);
-
       toast.success("Login successful!", {
         position: "top-center",
         autoClose: 3000,
         theme: "light",
       });
-
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
@@ -47,49 +40,55 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[80vh] bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-semibold text-center mb-6 text-indigo-600">
-          Login
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 px-4">
+      <div className="w-full max-w-md bg-white/70 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/40">
+        <h2 className="text-3xl font-extrabold text-center mb-6 text-indigo-700">
+          🔐 Login to Your Account
         </h2>
 
-        <input
-          type="email"
-          name="email"
-          value={data.email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <input
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              placeholder="Email"
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          value={data.password}
-          onChange={handleChange}
-          placeholder="Password"
-          required
-          className="w-full px-4 py-2 mb-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+          <div className="mb-6">
+            <input
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={handleChange}
+              placeholder="Password"
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition duration-200"
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-semibold py-3 rounded-lg shadow hover:opacity-90 transition"
+          >
+            Login
+          </button>
+        </form>
 
-        <p className="text-center mt-4 text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-indigo-600 hover:underline">
+        <p className="text-center mt-6 text-sm text-gray-700">
+          Don’t have an account?{" "}
+          <Link
+            to="/register"
+            className="text-indigo-600 font-semibold hover:underline"
+          >
             Register
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 };
