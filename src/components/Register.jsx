@@ -22,14 +22,8 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const payload = {
-        username: user.username,
-        email: user.email,
-        password: user.password,
-      };
-
       const url = `${API_URL}/api/users/register`;
-      const response = await axios.post(url, payload);
+      const response = await axios.post(url, user);
 
       toast.success("Registration successful!", {
         position: "top-center",
